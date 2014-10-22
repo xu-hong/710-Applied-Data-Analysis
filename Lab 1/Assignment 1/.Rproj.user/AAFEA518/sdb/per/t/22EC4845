@@ -1,0 +1,17 @@
+{
+    "contents" : "setwd(\"/Users/xuhong/Documents/Duke/Term 1 Courses/ENVIRON 710 Applied data analysis/Lab/Lab 7\")\n\nadat <- read.csv(\"TuskData.csv\", header=T)\nattach(adat)\n\n# Test for normality\nqqnorm(Tusk.kg[Year==1970])\nqqline(Tusk.kg[Year==1970])\nshapiro.test(Tusk.kg[Year==1970])\n\nqqnorm(Tusk.kg[Year==1990])\nqqline(Tusk.kg[Year==1990])\nshapiro.test(Tusk.kg[Year==1990])\n\nqqnorm(Tusk.kg[Year==2010])\nqqline(Tusk.kg[Year==2010])\nshapiro.test(Tusk.kg[Year==2010])\n\n\n# Test for homogeneity of variance\nsd(Tusk.kg[Year==1970])/sd(Tusk.kg[Year==1990])\nsd(Tusk.kg[Year==1970])/sd(Tusk.kg[Year==2010])\nsd(Tusk.kg[Year==1990])/sd(Tusk.kg[Year==2010])\n\n# one way ANOVA\nmod1 <- aov(Tusk.kg ~ factor(Year))\nsummary(mod1)\n\n#To determine which of the means are significantly different from one another\n#we conduct a post-hoc test.\nTukeyHSD(mod1)\nplot(TukeyHSD(mod1))\n\n\nerror.bars <- function(yvalues, se, nm){\n  xv <- barplot(yvalues, ylim=c(0, (max(yvalues)+max(se))),\n                names=nm, ylab=deparse(substitute(yvalues)), las=1)\n  g <- (max(xv)-min(xv))/50\n  for (i in 1:length(xv)){\n    arrows(xv[i], yvalues[i] + se[i], xv[i],\n           yvalues[i]-se[i], length=0.1, angle=90,\n           code=3)\n  }\n}\n\n\nyear.mean <- tapply(Tusk.kg, list(Year), mean)\nyear.n <- tapply(Tusk.kg, list(Year), length)\nyear.sd <- tapply(Tusk.kg, list(Year), sd)\nyear.se <- site.sd/sqrt(site.n)\nyear.se[is.na(year.se)==T] <- 0\nlabls <- as.character(levels(factor(Year)))\nyvals <- as.vector(year.mean)\n\nerror.bars(yvalues = yvals, se = year.se, nm = labls)\n",
+    "created" : 1413332944766.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2490144837",
+    "id" : "22EC4845",
+    "lastKnownWriteTime" : 1413334572,
+    "path" : "~/Documents/Duke/Term 1 Courses/ENVIRON 710 Applied data analysis/Lab/Lab 7/Hong Xu Lab 7 Turn In.R",
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

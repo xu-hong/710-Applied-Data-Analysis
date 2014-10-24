@@ -44,6 +44,9 @@ summary(mod1)
 TukeyHSD(mod1)
 plot(TukeyHSD(mod1))
 
+# add pairwise test
+pairwise.t.test(ChaveMoist, Site)
+
 
 error.bars <- function(yvalues, se, nm){
   xv <- barplot(yvalues, ylim=c(0, (max(yvalues)+max(se))),

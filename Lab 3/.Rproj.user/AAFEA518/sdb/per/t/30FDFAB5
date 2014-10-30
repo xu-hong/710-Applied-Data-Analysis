@@ -1,0 +1,17 @@
+{
+    "contents" : "setwd(\"/Users/xuhong/Documents/Duke/Term 1 Courses/ENVIRON 710 Applied data analysis/Lab/Lab 8\")\n# Factorial Design\npar(mfrow=c(1,1))\nfeed <- read.csv(\"Growth.csv\", header=T)\nwith(feed, boxplot(gain~diet+supplement, las=2, ylab='weight gain, pounds'))\n\ncols <- c('darkblue', 'green', 'orange')\nwith(feed, barplot(tapply(gain, list(diet,supplement), mean), las=1, col=cols, beside=T, ylim=c(0,35)))\nlabs <- c(\"barley\", \"oats\", \"wheat\" )\nlegend(2.3, 35, labs, fill=cols)\n# two way anova\nmod1 <- aov(gain~supplement*diet, data=feed)\nsummary(mod1)\n# following produce same results\n#lm1 <- lm(gain~supplement*diet, data=feed)\n#mod2 <- anova(lm1)\n\n# interation plot: no interaction seen (no crossing)\nwith(feed, interaction.plot(diet, supplement, gain, col=c(2,3,4,5)))\n\n# taking out the interaction term\nmod3 <- aov(gain~supplement + diet, data=feed)\nsummary(mod3)\n\n# post hoc test\nrequire(graphics)\ntm1 <- TukeyHSD(mod3, 'diet', ordered=TRUE)\nplot(tm1)\n\ntm2 <- TukeyHSD(mod3, 'supplement', ordered=TRUE)\nplot(tm2, las=2)\n\n# evaluate model assumption\npar(mfrow=c(2,2))\nplot(mod3)\n# test homogeneity of variance\nbartlett.test(gain~diet, data=feed)\nbartlett.test(gain~supplement, data=feed)\n\n# Block Design\nlab <- c(rep(1:4, each = 4))\nantibiotic <- rep(c(1:4), 4)\nresults <- (c(9.3, 9.4, 9.6, 10, 9.4, 9.3, 9.8, 9.9, 9.2,\n              9.4, 9.5, 9.7, 9.7, 9.6, 10, 10.2))\n\ndlabs <- data.frame(cbind(lab, antibiotic, results))\ndlabs$lab <- as.factor(dlabs$lab)\ndlabs$antibiotic <- as.factor(dlabs$antibiotic)\n\n# first test without considering blocking\nmod2 <- aov(results~antibiotic, data=dlabs)\nsummary(mod2)\n# consider block\nmod3 <- aov(results~antibiotic + lab, data=dlabs)\nsummary(mod3)\nwith(dlabs, interaction.plot(antibiotic, lab, results, col=c(1,2,3,4)))\nTukeyHSD(mod3, 'antibiotic', ordered=TRUE)\n\n# block variable as random variables\nmod4 <- aov(results~antibiotic + Error(lab), data=dlabs)\nsummary(mod4)\n# Repeated Measure Design\nad <- read.csv(\"Sales.csv\", header=T)\nad <- with(ad, data.frame(sales, city=factor(city),\n                          campaign = factor(campaign), time =\n                            factor(time)))\n\nmod5 <- lm(sales ~ campaign * time, data = ad)\nanova(mod5)\n\nmod6 <- aov(sales ~ campaign*time + Error(city),\n            data = ad)\nsummary(mod6)\n",
+    "created" : 1414343097665.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3737051431",
+    "id" : "30FDFAB5",
+    "lastKnownWriteTime" : 1414360911,
+    "path" : "~/Documents/Duke/Term 1 Courses/ENVIRON 710 Applied data analysis/Lab Github/ada/Lab 8/Hong Xu Lab 8.R",
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

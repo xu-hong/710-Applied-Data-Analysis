@@ -12,7 +12,7 @@ points(jitter(rep(2, length(Site[Site==2])), f=4), ChaveMoist[Site==2], col = "d
 points(jitter(rep(3, length(Site[Site==3])), f=4), ChaveMoist[Site==3], col = "darkred")
 
 # normal assumption?
-bp <- boxplot(log(ChaveMoist) ~ Site, las=1,
+boxplot(log(ChaveMoist) ~ Site, las=1,
         ylab = "log(Biomass)", xlab = "Sites")
 points(jitter(rep(1, length(Site[Site==1])), f=4),
        log(ChaveMoist[Site==1]), col = "darkgreen")
@@ -36,16 +36,13 @@ sd(ChaveMoist[Site==1])/sd(ChaveMoist[Site==3])
 
 
 # one way ANOVA
-mod1 <- aov(ChaveMoist ~ Site)
+mod1 <- aov(ChaveMoist ~ factor(Site))
 summary(mod1)
 
 #To determine which of the means are significantly different from one another
 #we conduct a post-hoc test.
 TukeyHSD(mod1)
 plot(TukeyHSD(mod1))
-
-# add pairwise test
-pairwise.t.test(ChaveMoist, Site)
 
 
 error.bars <- function(yvalues, se, nm){
@@ -60,7 +57,7 @@ error.bars <- function(yvalues, se, nm){
 }
 
 
-site.mean <- tapply(ChaveMoist, Site, mean)
+site.mean <- tapply(ChaveMoist, list(Site), mean)
 site.n <- tapply(ChaveMoist, list(Site), length)
 site.sd <- tapply(ChaveMoist, list(Site), sd)
 site.se <- site.sd/sqrt(site.n)

@@ -22,4 +22,5 @@ panel.cor <- function(x, y, digits=2, prefix="", cex.cor, ...)
 }
 
 panel.blank <- function(x, y)
-{ }
+{ 
+}

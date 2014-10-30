@@ -63,6 +63,7 @@ plot(mod0)
 
 ##################
 # Data 2: thickness of scale
+# just for test
 ##################
 thk <- read.csv("ScaleThickness.csv", sep=",")
 

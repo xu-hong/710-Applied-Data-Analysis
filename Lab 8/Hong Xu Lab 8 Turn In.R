@@ -61,6 +61,13 @@ with(biod, tapply(biomass, list(salt), mean))
 par(mfrow=c(2,2))
 plot(mod0)
 
+
+# try linear regression 
+lm.mod <- lm(biod$biomass ~ as.numeric(as.character(biod$salt)))
+summary(lm.mod)
+lm.mod.dummy <- lm(biod$biomass ~ biod$salt)
+summary(lm.mod.dummy)
+
 ##################
 # Data 2: thickness of scale
 # just for test

@@ -36,3 +36,15 @@ cor.test(y.fitted, lm1$fitted)
 opar <- par(mfrow=c(2,2))
 plot(lm1)
 par <- opar
+
+lm2 <- lm(AGBH.Mg.ha ~ mH.m, data = tdata[-c(25, 43, 63),])
+anova(lm2)
+summary(lm2)
+
+require(ggplot2)
+tdat1 <- tdata[-c(25,43,63), ]
+ggplot(tdat1, aes(x = mH.m, y = AGBH.Mg.ha)) +
+  geom_point(shape = 1) +
+  geom_smooth(method = lm) +
+  xlab("Mean height, m") +
+  ylab(expression(paste("Biomass Mg ", ha^-1)))

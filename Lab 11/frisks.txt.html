@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+  <head>
+    <title>NetID Services</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Pragma" content="no-cache">
+    <script src="/idp/js/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <link href="/idp/css/idp.css" rel="stylesheet" type="text/css" />
+    <link href="/idp/css/handheld.css" rel="stylesheet" media="handheld, only screen and (min-device-width: 320px) and (max-device-width: 768px)" />
+
+  </head>
+  <body id="idp">
+        
+    <div id="container1">
+      <div id="col1">&nbsp;</div>
+          
+      <div id="col2">
+
+        <div id="header">&nbsp;</div>
+        <div id="banner">
+          <div id="logo">
+            <h1><a accesskey="1" href="http://www.duke.edu" tabindex="1">Duke</a></h1>
+            <h2>SIGN IN</h2>
+          </div>
+        </div>
+  
+        <div id="main">
+          <div id="content">
+            <div id="portlet">
+
+              <h3><span>SIGN IN</span></h3>
+              <div id="portlet-content">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+        
+        
+          <form action="/idp/authn/external" method="post">
+        
+          <label for="j_username">NetID:</label>
+          <input class="text" type="text" id="j_username" name="j_username" maxlength="16" autocorrect="off" autocapitalize="off">
+          <label for="j_password">Password:</label>
+          <input class="text" type="password" id="j_password" name="j_password" value="">
+
+          <div id="login_options_heading_required" style="display:none"><br /><h3><span>ADVANCED VERIFICATION</span></h3></div>
+          <div id="login_options_heading_optional" style="display:none"><br /><h3><span>ADVANCED VERIFICATION (OPTIONAL)</span></h3></div>
+          <div id="login_options"></div>
+          <span id="advanced_verification_options2" style="display:none">
+            <span class="notes">
+              Advanced verification already complete.
+              <br />
+            </span>
+            <br />
+          </span>
+
+          <input style="padding-bottom: 0px; margin-bottom: 0px" class="button" id="Submit" name="Submit" type="submit" value="Enter">
+          <span id="advanced_verification_options1" style="display:none">
+            <input type="checkbox" id="rememberme" name="rememberme" style="display: inline; margin-bottom: 0px;" />
+            <label for="rememberme" style="display: inline; font-size: 0.7em;"> Remember this device for 12 hours</label>
+            <span id="rememberme_question" class="question"><a target="_blank" href="https://idms-mfa.oit.duke.edu/mfa/help">?</a></span>
+            <br />
+          </span>
+          <br />
+
+          <input id="passwordEntered" type="hidden" value="0" />
+          <input id="disableAutoCheck" type="hidden" value="0" />
+          <input id="disableMFACheck" type="hidden" value="0" />
+          <input id="doneWeight" type="hidden" value="0.0" />
+          <input id="requiredWeight" type="hidden" value="1.0" />
+          <input id="multiFactorCookieStrength" type="hidden" value="0.0" />
+          <input id="multiFactorOptional" type="hidden" value="0" />
+          <input name="use_default_login_page" type="hidden" value="1" />
+	</form>
+        <div class="notes">
+          <p class="MFAAdditional" style="display:none"><a href="https://idms-mfa.oit.duke.edu/mfa/help">Have a new device?</a></p>
+          <p><a href="https://pwreset.oit.duke.edu/">Forgot your password?</a></p>
+          
+          
+            <p><a href="/idp/authn/external_guest">Visitor Guest Access</a></p>
+          
+          You are on the correct Duke sign-in page if the URL above begins with <i>https://shib.oit.duke.edu/</i>.
+        </div>
+
+    <script type="text/javascript">
+      $("#j_username").keyup(function(event) {
+        event.preventDefault();
+
+        var code = event.keyCode || event.which;
+        if (typeof code != 'undefined') {
+          if (code != 9 && code != 13) {
+            $("#disableMFACheck").val("0");
+          }
+        }
+      });
+
+      $("#j_username").blur(function(event) {
+        event.preventDefault();
+
+        $("#disableAutoCheck").val("1");
+        if ($("#disableMFACheck").val() == "1") {
+          return;
+        }
+
+        $("#disableMFACheck").val("1");
+
+        if ($("#j_username").val().length > 0) {
+          if ($("#j_password").val().length > 0 && $("#passwordEntered").val() == "0") {
+            $("#passwordEntered").val("1");
+            $("#doneWeight").val(parseFloat($("#doneWeight").val()) + 1.0).change();
+          }
+
+          $('#login_options').replaceWith("<div id='login_options'><br /><img src='/idp/images/loading_animation.gif' alt='Reloading' /></div>");
+          var username = $('#j_username').val();
+
+          jQuery.post("/idp/authn/external", { j_username_prefMech: username }, function(result) {
+            $('#login_options').replaceWith("<div id='login_options'>" + result + "</div>");
+            $("#doneWeight").change();
+            if (parseFloat($("#requiredWeight").val()) > 1 && 1.0 == 1) {
+              $(".MFAAdditional").show();
+
+              $("#login_options_heading_optional").hide();
+              $("#login_options_heading_required").show();
+
+              if (parseFloat($("#multiFactorCookieStrength").val()) > 0) {
+                $("#advanced_verification_options2").show();
+              } else {
+                $("#advanced_verification_options1").show();
+              }
+
+              if ($(".expandLink").length == 1) {
+                $(".expandLink").click();
+              }
+            } else if ($("#multiFactorOptional").val() == "1" && 1.0 == 1) {
+              $(".MFAAdditional").show();
+
+              $("#login_options_heading_required").hide();
+              $("#login_options_heading_optional").show();
+
+              if (parseFloat($("#multiFactorCookieStrength").val()) > 0) {
+                $("#advanced_verification_options2").show();
+              } else {
+                $("#advanced_verification_options1").show();
+              }
+            } else {
+              $(".MFAAdditional").hide();
+              $("#login_options_heading_required").hide();
+              $("#login_options_heading_optional").hide();
+              $("#advanced_verification_options1").hide();
+              $("#advanced_verification_options2").hide();
+            }
+          });
+        }
+      });
+
+      $("#j_password").keyup(function (event) {
+        event.preventDefault();
+        if ($("#j_password").val().length > 0 && $("#passwordEntered").val() == "0") {
+          $("#passwordEntered").val("1");
+          $("#doneWeight").val(parseFloat($("#doneWeight").val()) + 1.0).change();
+        } else if ($("#j_password").val().length == 0 && $("#passwordEntered").val() == "1") {
+          $("#passwordEntered").val("0");
+          $("#doneWeight").val(parseFloat($("#doneWeight").val()) - 1.0).change();
+        }
+      });
+
+      $("#doneWeight").change(function (event) {
+        if ((parseFloat($("#doneWeight").val()) + parseFloat($("#multiFactorCookieStrength").val())) >= parseFloat($("#requiredWeight").val()) || parseFloat($("#requiredWeight").val()) == 1) {
+          $("#Submit").prop("disabled", false);
+        } else {
+          $("#Submit").prop("disabled", true);
+        }
+      });
+
+      window.onload = function () {
+        $("#j_username").focus();
+        setTimeout(function() { window.scrollTo(0, 1) }, 100);
+
+        setInterval(function() {
+          if ($("#j_username").val().length > 0 && $("#j_password").val().length > 0 && $("#disableAutoCheck").val() == "0") {
+            $("#disableAutoCheck").val("1");
+            $("#j_username").blur();
+            $("#j_password").focus();
+          }
+        }, 250);
+      }
+    </script>
+
+  
+              </div>
+            </div>
+            <div class="help">
+              <p>For assistance, please visit <a href="http://oit.duke.edu/help">http://oit.duke.edu/help</a> or <a href="http://dhts.duke.edu">http://dhts.duke.edu</a>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="col3">&nbsp;</div>
+    </div>
+  </body>
+</html>

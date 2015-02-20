@@ -44,6 +44,7 @@ bartlett.test(biomass~salt*block, data=biod)
 # 
 mod0 <- aov(biomass ~ salt + block, data=biod)
 mod1 <- aov(biomass ~ salt + Error(block), data=biod)
+summary(mod0)
 summary(mod1)
 with(biod, interaction.plot(salt, block, biomass, col = c(1,2,3,4)))
 
